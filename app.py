@@ -19,7 +19,7 @@ st.set_page_config(page_title="AI 관상가", page_icon="🎭")
 api_key = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
-st.title("🎭 AI 관상 도우미 (Gemini 3 Flash)")
+st.title("🎭 AI 관상가")
 st.write("얼굴 사진을 올리면 관상을 분석해 드립니다.")
 
 # 2. 이미지 입력 (카메라 또는 파일 업로드)
@@ -44,7 +44,7 @@ if target_file:
         try:
             with st.spinner("전문 관상가가 분석 중입니다..."):
                 # 모델 로드 (Gemini 3 Flash)
-                model = genai.GenerativeModel('gemini-3-flash-preview') # 현재 안정적 사용 가능 버전
+                model = genai.GenerativeModel('gemini-1.5-flash') # 현재 안정적 사용 가능 버전
                 
                 # 분석 프롬프트
                 prompt = """
