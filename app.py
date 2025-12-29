@@ -7,7 +7,7 @@ import io
 def compress_image(uploaded_file):
     image = Image.open(uploaded_file)
     # 1. 이미지 크기 조정 (가로 1024px 정도면 관상 분석에 충분합니다)
-    image.thumbnail((1024, 1024))
+    image.thumbnail((512, 512))
     
     # 2. 용량 압축 (JPEG 포맷, 퀄리티 80%)
     img_byte_arr = io.BytesIO()
