@@ -2,6 +2,17 @@ import streamlit as st
 import google.generativeai as genai
 import os
 from PIL import Image
+import io
+
+def compress_image(uploaded_file):
+    image = Image.open(uploaded_file)
+    # 1. 이미지 크기 조정 (가로 1024px 정도면 관상 분석에 충분합니다)
+    image.thumbnail((1024, 1024))
+    
+    # 2. 용량 압축 (JPEG 포맷, 퀄리티 80%)
+    img_byte_arr = io.BytesIO()
+    image.save(img_byte_arr, format='JPEG', quality=80)
+    return img_byte_arr.getvalue()
 
 # 1. 페이지 설정 및 보안 (API Key)
 st.set_page_config(page_title="AI 관상가", page_icon="🎭")
@@ -20,8 +31,9 @@ target_file = img_file if img_file else camera_file
 if target_file:
     # 이미지 표시
     img = Image.open(target_file)
-    st.image(img, caption="분석할 사진", width=300)
-
+    compressed_img = compress_image(target_file)
+    st.image(compressed_img, caption="분석할 사진", width=300)
+    
     if st.button("관상 분석 시작"):
         try:
             with st.spinner("전문 관상가가 분석 중입니다..."):
@@ -104,7 +116,7 @@ if target_file:
                 """
                 
                 # 이미지와 프롬프트 전송
-                response = model.generate_content([prompt, img])
+                response = model.generate_content([prompt, compressed_img])
                 
                 st.subheader("🔮 분석 결과")
                 st.markdown(response.text)
