@@ -44,7 +44,7 @@ if target_file:
         try:
             with st.spinner("전문 관상가가 분석 중입니다..."):
                 # 모델 로드 (Gemini 3 Flash)
-                model = genai.GenerativeModel('gemini-2.0-flash') # 현재 안정적 사용 가능 버전
+                model = genai.GenerativeModel('gemini-1.5-flash') # 현재 안정적 사용 가능 버전
                 
                 # 분석 프롬프트
                 prompt = """
