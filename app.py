@@ -4,15 +4,25 @@ import os
 from PIL import Image
 import io
 
-def compress_image(uploaded_file):
+def get_compressed_image_dict(uploaded_file):
     image = Image.open(uploaded_file)
-    # 1. 이미지 크기 조정 (가로 1024px 정도면 관상 분석에 충분합니다)
+    
+    # 1. 이미지 크기 조정 (512px는 속도 면에서 아주 탁월한 선택입니다!)
     image.thumbnail((512, 512))
     
-    # 2. 용량 압축 (JPEG 포맷, 퀄리티 80%)
+    # 2. RGB 모드 변환 (PNG나 RGBA 파일을 대비해 투명도 제거)
+    if image.mode in ("RGBA", "P"):
+        image = image.convert("RGB")
+    
+    # 3. 메모리 내에서 JPEG로 압축 저장
     img_byte_arr = io.BytesIO()
     image.save(img_byte_arr, format='JPEG', quality=80)
-    return img_byte_arr.getvalue()
+    
+    # 4. Gemini API가 인식할 수 있는 '딕셔너리' 형태로 반환
+    return {
+        "mime_type": "image/jpeg",
+        "data": img_byte_arr.getvalue()
+    }
 
 # 1. 페이지 설정 및 보안 (API Key)
 st.set_page_config(page_title="AI 관상가", page_icon="🎭")
@@ -31,8 +41,8 @@ target_file = img_file if img_file else camera_file
 if target_file:
     # 이미지 표시
     img = Image.open(target_file)
-    compressed_img = compress_image(target_file)
-    st.image(compressed_img, caption="분석할 사진", width=300)
+    compressed_img_data = get_compressed_image_dict(target_file)
+    st.image(img, caption="분석할 사진", width=300)
     
     if st.button("관상 분석 시작"):
         try:
@@ -116,7 +126,7 @@ if target_file:
                 """
                 
                 # 이미지와 프롬프트 전송
-                response = model.generate_content([prompt, compressed_img])
+                response = model.generate_content([prompt, compressed_img_data])
                 
                 st.subheader("🔮 분석 결과")
                 st.markdown(response.text)
