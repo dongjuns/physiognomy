@@ -26,11 +26,11 @@ if target_file:
         try:
             with st.spinner("전문 관상가가 분석 중입니다..."):
                 # 모델 로드 (Gemini 3 Flash)
-                model = genai.GenerativeModel('gemini-1.5-flash') # 현재 안정적 사용 가능 버전
+                model = genai.GenerativeModel('gemini-3-flash-preview') # 현재 안정적 사용 가능 버전
                 
                 # 분석 프롬프트
                 prompt = """
-                당신은 30년 경력의 관상가입니다. 
+                당신은 30년 경력의 관상가입니다.
                 첨부된 사진 속 인물의 눈, 코, 입, 이마, 턱을 정밀하게 분석하세요.
                 1. 성격적 특징
                 2. 재물운 및 직업운
